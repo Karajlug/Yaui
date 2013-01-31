@@ -33,15 +33,19 @@
 	    
 	    settings = $.extend({
 		'title_class': "btntitle",
-		'before_change': function(){},
-		'after_change': function(){}
+		'before_change': function($this){},
+		'after_change': function($this){}
 	    }, options);
 
 	    menu = $this.find("ul").first();
 	    items = menu.find("li");
 	    button = $this.find("." + settings.title_class);
 	    menu.hide();
+	    
 
+	    menu.width($this.width());
+	    console.log(items.height() + parseInt(menu.css("padding-top")) + parseInt(menu.css("padding-bottom")));
+	    menu.css("height", items.height() + parseInt(menu.css("padding-top")) + parseInt(menu.css("padding-bottom")));
 	    $this.on("click", clicked);
 
 	},
@@ -58,7 +62,9 @@
 	else {
 	    button.addClass("pressed");
 	}
-	menu.slideToggle('slow');
+	settings.before_change($this);
+	menu.slideToggle('fast');
+	settings.after_change($this);
     }
     
     $.fn.yamabutton = function(method) {
