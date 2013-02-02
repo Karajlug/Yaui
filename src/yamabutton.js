@@ -44,8 +44,8 @@
 	    
 
 	    menu.width($this.width());
-	    console.log(items.height() + parseInt(menu.css("padding-top")) + parseInt(menu.css("padding-bottom")));
-	    menu.css("height", items.height() + parseInt(menu.css("padding-top")) + parseInt(menu.css("padding-bottom")));
+
+	    //menu.css("height", items.height() + parseInt(menu.css("padding-top")) + parseInt(menu.css("padding-bottom")));
 	    $this.on("click", clicked);
 
 	},
@@ -56,14 +56,26 @@
     };
 
     function clicked() {
+	settings.before_change($this);
+
 	if (button.hasClass("pressed")) {
 	    button.removeClass("pressed");
+	    menu.slideToggle('fast');
+
 	}
 	else {
 	    button.addClass("pressed");
+	    menu.slideToggle('fast');
+	    var menu_height = 0;
+	    $.each(items, function (key, value){
+		menu_height = menu_height + parseInt($(value).css("height"));
+		console.log($(value).css("height"));
+	    });
+	    console.log(menu_height);
+	    menu.css("height", menu_height + "px");
+	    menu.height(menu_height);
 	}
-	settings.before_change($this);
-	menu.slideToggle('fast');
+	
 	settings.after_change($this);
     }
     
