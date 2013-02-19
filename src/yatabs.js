@@ -19,26 +19,19 @@
 
 (function($){
 
-    function change_tab(tabname) {
-	tabs.removeClass(settings.active_class);
-	tabs.find('a[href="#' + tabname + '"]').parent("li." + settings.tab_class).addClass(settings.active_class);
-	settings.before_change();
-	containers.hide();
-	document.dd = containers;
-	containers.filter("#" + tabname).fadeIn(settings.fadespeed);
-	settings.after_change();
-    }
 
     // Global settings object
-    var settings;
     var $this;
-    var containers, tabs;
+
+    function change_tab(tabname, containers) {
+
+    }
 
     // YaTabs methods
     var methods = {
-	init : function( options ) { 
-	    
-	    settings = $.extend({
+	init : function( options ) {
+
+	    var settings = $.extend({
 		'active_class': 'active',
 		'container_class': "tabcontainer",
 		'tab_class': "tab",
@@ -46,47 +39,33 @@
 		'before_change': function(){},
 		'after_change': function(){}
 	    }, options);
-	    
-	    containers = $this.find("." + settings.container_class);
-	    tabs = $this.find("." + settings.tab_class);
+
+	    var containers = $("." + settings.container_class);
+	    var tabs = $this.find("." + settings.tab_class);
 	    containers.hide();
+	    containers.filter(tabs.filter("." + settings.active_class).find("a").attr("href")).show();
 
-	    var hash = new String(location.hash).replace("#", "");
-	    
-	    if (hash !== "") {
-		change_tab(hash);
 
-	    }
-	    else {
-		var count = tabs.has("." + settings.active_class).size();
 
-		if ((count == 0) || (count === undefined)) {
-		    var first_tab = tabs.first();
-		    first_tab.addClass(settings.active_class);
-		    var tabname = new String(first_tab.find("a").attr("href")).replace("#", "");
-		    change_tab(tabname);
+	    $(tabs).on("click", function(){
+		var tabname = new String($(this).find("a").attr("href").replace("#", ""));
+		tabs.removeClass(settings.active_class);
+		console.log(tabs);
+		tabs.find('a[href="#' + tabname + '"]').parent("li." + settings.tab_class).addClass(settings.active_class);
+		settings.before_change();
+		containers.hide();
+		console.log(containers);
+		containers.filter("#" + tabname).show();
+		settings.after_change();
 
-		}
-		else {
-		    var active_tab = tabs.has("." + settings.active_class).first();
-		    change_tab(new String(actove_tab.find("a").attr("href")).replace("#", ""));
+	    });
 
-		}
-	    }
-
-	    function on_hashchange(){
-		change_tab(new String(location.hash).replace("#", ""));
-	    }
-	    
-	    window.onhashchange = on_hashchange;
-	    
 	    return this;
 
 	},
 	changetab: function(tabname) {
-	    changee_tab(tabname);
 	}
-      
+
   };
 
   $.fn.yatabs = function(method) {
@@ -95,11 +74,11 @@
       if (methods[method]) {
 	  return methods[method].apply(this,
 				       Array.prototype.slice.call(arguments, 1));
-	  
+
       }
       else if (typeof method === 'object' || ! method) {
 	  return methods.init.apply(this, arguments);
-	  
+
       }
       else {
 	  $.error('Method ' +  method + ' does not exist on jQuery.yatabs');
